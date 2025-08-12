@@ -2,7 +2,7 @@
 
 > Pear core ref counter
 
-# Usage
+## Usage
 
 ```js
 const ref = require('pear-ref')
@@ -16,6 +16,6 @@ handleCreatingCb(function callback () { ref.unref() })
 ref.track(handleCreatingPromise())
 ```
 
-# License
+## License
 
 Apache-2.0
