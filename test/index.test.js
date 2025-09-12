@@ -80,10 +80,16 @@ test('concurrent track calls emit paired ref/unref', async (t) => {
 })
 
 test('uses Pear[Pear.constructor.REF] singleton when available', async (t) => {
+  t.plan(1)
   const Pear = global.Pear
+  reset(t.teardown)
   t.teardown(() => { global.Pear = Pear })
   Pear.constructor = () => {}
-  Pear.constructor.REF = ref
-  delete require.cache[require.resolve('..')]
-  t.is(require('..'), Pear.constructor.REF)
+  Pear.constructor.REF = Symbol('ref')
+  Pear[Pear.constructor.REF] = ref
+  for (const id of Object.keys(require.cache)) {
+    if (id.startsWith('bare:') || id.includes('/node_modules/')) continue
+    delete require.cache[id]
+  }
+  t.is(require('..'), Pear[Pear.constructor.REF])
 })
