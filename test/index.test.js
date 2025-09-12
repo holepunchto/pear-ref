@@ -1,5 +1,6 @@
 'use strict'
 const test = require('brittle')
+global.Pear = {}
 const ref = require('..')
 
 const wait = (ms) => new Promise((resolve) => setTimeout(resolve, ms))
@@ -76,4 +77,13 @@ test('concurrent track calls emit paired ref/unref', async (t) => {
   t.is(refEvents, 2)
   t.is(unrefEvents, 2)
   t.is(ref.refs, start)
+})
+
+test('uses Pear[Pear.constructor.REF] singleton when available', async (t) => {
+  const Pear = global.Pear
+  t.teardown(() => { global.Pear = Pear })
+  Pear.constructor = () => {}
+  Pear.constructor.REF = ref
+  delete require.cache[require.resolve('..')]
+  t.is(require('..'), Pear.constructor.REF)
 })
