@@ -11,7 +11,9 @@ ref.on('ref', (refs) => console.log('ref', 'count', refs))
 ref.on('unref', (refs) => console.log('unref', 'count', refs))
 
 ref.ref()
-handleCreatingCb(function callback () { ref.unref() })
+handleCreatingCb(function callback() {
+  ref.unref()
+})
 
 ref.track(handleCreatingPromise())
 ```
