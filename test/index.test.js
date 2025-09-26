@@ -18,11 +18,11 @@ test('ref increments and emits; unref decrements and emits', (t) => {
   const start = reset(t.teardown)
   t.plan(4)
 
-  ref.once('ref', n => t.is(n, start + 1))
+  ref.once('ref', (n) => t.is(n, start + 1))
   ref.ref()
   t.is(ref.refs, start + 1)
 
-  ref.once('unref', n => t.is(n, start))
+  ref.once('unref', (n) => t.is(n, start))
   ref.unref()
   t.is(ref.refs, start)
 })
@@ -59,16 +59,17 @@ test('concurrent track calls emit paired ref/unref', async (t) => {
 
   let refEvents = 0
   let unrefEvents = 0
-  const onRef = () => { refEvents++ }
-  const onUnref = () => { unrefEvents++ }
+  const onRef = () => {
+    refEvents++
+  }
+  const onUnref = () => {
+    unrefEvents++
+  }
   ref.on('ref', onRef)
   ref.on('unref', onUnref)
 
   try {
-    await Promise.all([
-      ref.track(wait(10)),
-      ref.track(wait(5))
-    ])
+    await Promise.all([ref.track(wait(10)), ref.track(wait(5))])
   } finally {
     ref.off('ref', onRef)
     ref.off('unref', onUnref)
@@ -83,7 +84,9 @@ test('uses Pear[Pear.constructor.REF] singleton when available', async (t) => {
   t.plan(1)
   const Pear = global.Pear
   reset(t.teardown)
-  t.teardown(() => { global.Pear = Pear })
+  t.teardown(() => {
+    global.Pear = Pear
+  })
   Pear.constructor = () => {}
   Pear.constructor.REF = Symbol('ref')
   Pear[Pear.constructor.REF] = ref
